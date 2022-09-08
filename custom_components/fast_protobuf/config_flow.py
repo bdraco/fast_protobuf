@@ -1,4 +1,4 @@
-"""Config flow for Profiler integration."""
+"""Config flow for Fast protobuf integration."""
 import voluptuous as vol
 
 from homeassistant import config_entries
@@ -8,7 +8,7 @@ from .const import DOMAIN  # pylint: disable=unused-import
 
 
 class ConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Profiler."""
+    """Handle a config flow for Fast protobuf."""
 
     VERSION = 1
     CONNECTION_CLASS = config_entries.CONN_CLASS_UNKNOWN

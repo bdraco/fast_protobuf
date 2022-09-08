@@ -1,6 +1,6 @@
 {
   "domain": "fast_protobuf",
-  "name": "Profiler",
+  "name": "Fast protobuf",
   "documentation": "https://www.home-assistant.io/integrations/fast_protobuf",
   "requirements": ["pyprof2calltree==1.4.5", "guppy3==3.1.0", "objgraph==3.4.1"],
   "codeowners": ["@bdraco"],

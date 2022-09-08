@@ -1,4 +1,4 @@
 """Consts used by fast_protobuf."""
 
 DOMAIN = "fast_protobuf"
-DEFAULT_NAME = "Profiler"
+DEFAULT_NAME = "Fast protobuf"

@@ -1,11 +1,11 @@
 start:
-  description: Start the Profiler
+  description: Start the Fast protobuf
   fields:
     seconds:
       description: The number of seconds to run the fast_protobuf.
       example: 60.0
 memory:
-  description: Start the Memory Profiler
+  description: Start the Memory Fast protobuf
   fields:
     seconds:
       description: The number of seconds to run the memory fast_protobuf.
