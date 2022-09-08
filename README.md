@@ -1,13 +1,13 @@
-# profiler
+# fast_protobuf
 Home Assistant Profiler
 
-The profiler can be installed via HACS by adding `https://github.com/bdraco/profiler.git` as a custom repository.
+The fast_protobuf can be installed via HACS by adding `https://github.com/bdraco/fast_protobuf.git` as a custom repository.
 
 Then setup the Profile integration
 
 <img width="787" alt="Screen Shot 2020-10-03 at 8 55 58 AM" src="https://user-images.githubusercontent.com/663432/94993383-46ea0400-0556-11eb-94fd-868d8267eb7e.png">
 
-Once its up an running call the `profiler.start` service.
+Once its up an running call the `fast_protobuf.start` service.
 
 <img width="530" alt="Screen Shot 2020-10-03 at 8 54 51 AM" src="https://user-images.githubusercontent.com/663432/94993366-24f08180-0556-11eb-98f6-7352b09a9183.png">
 

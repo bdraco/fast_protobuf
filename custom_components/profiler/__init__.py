@@ -1,4 +1,4 @@
-"""The profiler integration."""
+"""The fast_protobuf integration."""
 import asyncio
 import cProfile
 from datetime import timedelta
@@ -45,7 +45,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Set up the profiler component."""
+    """Set up the fast_protobuf component."""
     return True
 
 
@@ -168,22 +168,22 @@ async def _async_generate_profile(hass: HomeAssistant, call: ServiceCall):
     hass.components.persistent_notification.async_create(
         "The profile has started. This notification will be updated when it is complete.",
         title="Profile Started",
-        notification_id=f"profiler_{start_time}",
+        notification_id=f"fast_protobuf_{start_time}",
     )
-    profiler = cProfile.Profile()
-    profiler.enable()
+    fast_protobuf = cProfile.Profile()
+    fast_protobuf.enable()
     await asyncio.sleep(float(call.data[CONF_SECONDS]))
-    profiler.disable()
+    fast_protobuf.disable()
 
     cprofile_path = hass.config.path(f"profile.{start_time}.cprof")
     callgrind_path = hass.config.path(f"callgrind.out.{start_time}")
     await hass.async_add_executor_job(
-        _write_profile, profiler, cprofile_path, callgrind_path
+        _write_profile, fast_protobuf, cprofile_path, callgrind_path
     )
     hass.components.persistent_notification.async_create(
         f"Wrote cProfile data to {cprofile_path} and callgrind data to {callgrind_path}",
         title="Profile Complete",
-        notification_id=f"profiler_{start_time}",
+        notification_id=f"fast_protobuf_{start_time}",
     )
 
 
@@ -192,26 +192,26 @@ async def _async_generate_memory_profile(hass: HomeAssistant, call: ServiceCall)
     hass.components.persistent_notification.async_create(
         "The memory profile has started. This notification will be updated when it is complete.",
         title="Profile Started",
-        notification_id=f"memory_profiler_{start_time}",
+        notification_id=f"memory_fast_protobuf_{start_time}",
     )
-    heap_profiler = hpy()
-    heap_profiler.setref()
+    heap_fast_protobuf = hpy()
+    heap_fast_protobuf.setref()
     await asyncio.sleep(float(call.data[CONF_SECONDS]))
-    heap = heap_profiler.heap()
+    heap = heap_fast_protobuf.heap()
 
     heap_path = hass.config.path(f"heap_profile.{start_time}.hpy")
     await hass.async_add_executor_job(_write_memory_profile, heap, heap_path)
     hass.components.persistent_notification.async_create(
         f"Wrote heapy memory profile to {heap_path}",
         title="Profile Complete",
-        notification_id=f"memory_profiler_{start_time}",
+        notification_id=f"memory_fast_protobuf_{start_time}",
     )
 
 
-def _write_profile(profiler, cprofile_path, callgrind_path):
-    profiler.create_stats()
-    profiler.dump_stats(cprofile_path)
-    convert(profiler.getstats(), callgrind_path)
+def _write_profile(fast_protobuf, cprofile_path, callgrind_path):
+    fast_protobuf.create_stats()
+    fast_protobuf.dump_stats(cprofile_path)
+    convert(fast_protobuf.getstats(), callgrind_path)
 
 
 def _write_memory_profile(heap, heap_path):

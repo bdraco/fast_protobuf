@@ -1,4 +1,4 @@
-"""Consts used by profiler."""
+"""Consts used by fast_protobuf."""
 
-DOMAIN = "profiler"
+DOMAIN = "fast_protobuf"
 DEFAULT_NAME = "Profiler"
