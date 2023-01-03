@@ -109,12 +109,21 @@ def run_command(
     cmd: str, env: dict[str, str] | None = None, timeout: int | None = None
 ) -> None:
     """Implement subprocess.run but handle timeout different."""
-    subprocess.run(
-        cmd,
-        shell=True,  # nosec
-        check=True,
-        stdout=sys.stdout,
-        stderr=sys.stderr,
-        env=env,
-        timeout=timeout,
-    )
+    try:
+        subprocess.run(
+            cmd,
+            shell=True,  # nosec
+            check=True,
+            env=env,
+            timeout=timeout,
+            capture_output=True,
+        )
+    except subprocess.CalledProcessError as err:
+        _LOGGER.error(
+            "Error running command: %s: %s - stderr:%s, stdout:%s",
+            cmd,
+            err,
+            err.stderr,
+            err.stdout,
+        )
+        raise
