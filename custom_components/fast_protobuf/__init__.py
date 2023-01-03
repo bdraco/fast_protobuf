@@ -77,7 +77,7 @@ def build_wheel(target_dir: str, version: str) -> str:
             f"cd {tmp_dist_dir}/protobuf && git submodule update --init --recursive --depth 1"
         )
         run_command(
-            f"cd {tmp_dist_dir}/protobuf && CFLAGS='-fPIC' CXXFLAGS='-fPIC' cmake -Dprotobuf_BUILD_EXAMPLES=OFF -Dprotobuf_BUILD_TESTS=OFF ."
+            f"cd {tmp_dist_dir}/protobuf && CFLAGS='-fPIC' CXXFLAGS='-fPIC' cmake -DCMAKE_C_FLAGS=-fPIC -DCMAKE_CXX_FLAGS=-fPIC -Dprotobuf_BUILD_EXAMPLES=OFF -Dprotobuf_BUILD_TESTS=OFF ."
         )
         run_command(
             f"cd {tmp_dist_dir}/protobuf && CFLAGS='-fPIC' CXXFLAGS='-fPIC' cmake --build . --parallel 10"
