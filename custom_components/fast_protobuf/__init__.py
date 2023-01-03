@@ -74,20 +74,21 @@ def build_wheel(target_dir: str, version: str) -> str:
             f" https://github.com/protocolbuffers/protobuf {tmp_dist_dir}/protobuf"
         )
         run_command(
-            f"cd {tmp_dist_dir}/protobuf && git submodule update --init --recursive"
+            f"cd {tmp_dist_dir}/protobuf && git submodule update --init --recursive --depth 1"
         )
         run_command(
             f"cd {tmp_dist_dir}/protobuf && cmake -Dprotobuf_BUILD_EXAMPLES=OFF -Dprotobuf_BUILD_TESTS=OFF ."
         )
-        run_command(f"cd {tmp_dist_dir}/protobuf &&cmake --build . --parallel 10")
+        run_command(f"cd {tmp_dist_dir}/protobuf && cmake --build . --parallel 10")
+        run_command(f"cd {tmp_dist_dir}/protobuf/src && ln -s ../ .libs")
         run_command(
             f"cd {tmp_dist_dir}/protobuf/python && "
-            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=.. PROTOC=../protoc "
+            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=../ PROTOC=../protoc "
             f"{python_bin} setup.py build --cpp_implementation --compile_static_extension"
         )
         run_command(
             f"cd {tmp_dist_dir}/protobuf/python && "
-            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=.. PROTOC=../protoc "
+            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=../ PROTOC=../protoc "
             f"{python_bin} setup.py bdist_wheel --cpp_implementation --compile_static_extension"
         )
         wheel_file = glob.glob(f"{tmp_dist_dir}/protobuf/python/dist/*.whl")[0]
