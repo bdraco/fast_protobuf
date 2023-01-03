@@ -57,6 +57,8 @@ def build_wheel(target_dir: str, version: str) -> str:
     python_bin = sys.executable
     cpu_count = os.cpu_count() or 4
     _LOGGER.info("Building protobuf wheel for %s", version)
+    if version.startswith("4."):
+        version = version.lstrip("4.")
     target_dir = os.path.abspath(target_dir)
     with tempfile.TemporaryDirectory(
         dir=os.path.expanduser("~")  # /tmp may be non-executable
@@ -65,25 +67,27 @@ def build_wheel(target_dir: str, version: str) -> str:
             run_command(
                 "apk add "
                 "autoconf automake libtool m4 gcc musl-dev "
-                "openssl-dev libffi-dev zlib-dev jpeg-dev g++ make"
+                "openssl-dev libffi-dev zlib-dev jpeg-dev g++ make git cmake"
             )
         run_command(
             f"git clone --depth 1 --branch v{version}"
             f" https://github.com/protocolbuffers/protobuf {tmp_dist_dir}/protobuf"
         )
-        run_command(f"cd {tmp_dist_dir}/protobuf && /bin/sh ./autogen.sh")
         run_command(
-            f'cd {tmp_dist_dir}/protobuf && /bin/sh ./configure "CFLAGS=-fPIC" "CXXFLAGS=-fPIC"'
+            f"cd {tmp_dist_dir}/protobuf && git submodule update --init --recursive"
         )
-        run_command(f"cd {tmp_dist_dir}/protobuf && make -j{cpu_count}")
+        run_command(
+            f"cd {tmp_dist_dir}/protobuf && cmake -Dprotobuf_BUILD_EXAMPLES=OFF -Dprotobuf_BUILD_TESTS=OFF ."
+        )
+        run_command(f"cd {tmp_dist_dir}/protobuf &&cmake --build . --parallel 10")
         run_command(
             f"cd {tmp_dist_dir}/protobuf/python && "
-            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=../src/.libs "
+            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=.. PROTOC=../protoc "
             f"{python_bin} setup.py build --cpp_implementation --compile_static_extension"
         )
         run_command(
             f"cd {tmp_dist_dir}/protobuf/python && "
-            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=../src/.libs "
+            f"MAKEFLAGS=-j{cpu_count} LD_LIBRARY_PATH=.. PROTOC=../protoc "
             f"{python_bin} setup.py bdist_wheel --cpp_implementation --compile_static_extension"
         )
         wheel_file = glob.glob(f"{tmp_dist_dir}/protobuf/python/dist/*.whl")[0]
