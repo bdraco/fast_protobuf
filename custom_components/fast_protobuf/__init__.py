@@ -55,7 +55,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 def build_wheel(target_dir: str, version: str) -> str:
     """Build a wheel for the current platform."""
     python_bin = sys.executable
-    cpu_count = (os.cpu_count() or 4) / 2
+    cpu_count = 4
     _LOGGER.info("Building protobuf wheel for %s", version)
     if version.startswith("4."):
         version = version.lstrip("4.")
