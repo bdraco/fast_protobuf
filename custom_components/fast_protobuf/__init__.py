@@ -34,7 +34,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
     _LOGGER.warning("Disabled as it is not compatible with the 2023.3+ version of Home Assistant")
-    return
+    return False
     
     _LOGGER.warning(
         "Building protobuf %s cpp version in the background, this will be cpu intensive",
