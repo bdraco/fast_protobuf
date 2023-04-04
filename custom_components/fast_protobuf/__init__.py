@@ -80,7 +80,7 @@ def reinstall_protobuf(hass: HomeAssistant, version: str) -> str:
             "openssl-dev libffi-dev zlib-dev jpeg-dev make git cmake"
         )
     run_command(
-        f"{python_bin} -m pip install 'protobuf=={version}' --no-binary 'protobuf'"
+        f"{python_bin} -m pip install 'protobuf=={version}' --upgrade --no-dep --force-reinstall --no-binary 'protobuf'"
     )
     _LOGGER.warning("Restart Home Assistant to use the new wheel")
     persistent_notification.create(
