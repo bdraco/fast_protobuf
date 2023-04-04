@@ -26,7 +26,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
     current_type = api_implementation.Type()
 
-    if current_type not in ("upb", "cpp"):
+    if current_type in ("upb", "cpp"):
         _LOGGER.warning(
             "Already using %s %s implementation of protobuf, enjoy :)",
             PROTOBUF_VERSION,
@@ -42,9 +42,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         version_to_build = PROTOBUF_MIN_VERSION
 
     _LOGGER.warning(
-        "Building protobuf upb %s in the background to replace %s, this will be cpu intensive",
+        "Building protobuf upb %s in the background to replace %s %s, this will be cpu intensive",
         version_to_build,
         current_type,
+        PROTOBUF_VERSION,
     )
 
     @callback
