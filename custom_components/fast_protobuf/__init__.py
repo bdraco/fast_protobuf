@@ -81,7 +81,7 @@ def reinstall_protobuf(hass: HomeAssistant, version: str) -> str:
         )
     try:
         run_command(
-            f"{python_bin} -m pip install 'protobuf=={version}' --upgrade -no-dependencies --force-reinstall --no-binary protobuf"
+            f"{python_bin} -m pip install 'protobuf=={version}' --upgrade --no-dependencies --force-reinstall --no-binary protobuf"
         )
     except subprocess.CalledProcessError as err:
         _LOGGER.warning(
@@ -90,7 +90,7 @@ def reinstall_protobuf(hass: HomeAssistant, version: str) -> str:
         persistent_notification.create(
             hass,
             f"Error: {err}, check the logs for more information",
-            "Protobuf failed to build",
+            "Protobuf failed to build: {err.stderr}, {err.stdout}",
             "fast_protobuf",
         )
         return
