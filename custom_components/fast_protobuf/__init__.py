@@ -79,9 +79,22 @@ def reinstall_protobuf(hass: HomeAssistant, version: str) -> str:
             "autoconf automake libtool m4 gcc musl-dev "
             "openssl-dev libffi-dev zlib-dev jpeg-dev make git cmake"
         )
-    run_command(
-        f"{python_bin} -m pip install 'protobuf=={version}' --upgrade --no-dep --force-reinstall --no-binary 'protobuf'"
-    )
+    try:
+        run_command(
+            f"{python_bin} -m pip install 'protobuf=={version}' --upgrade -no-dependencies --force-reinstall --no-binary protobuf"
+        )
+    except subprocess.CalledProcessError as err:
+        _LOGGER.warning(
+            "Building the new wheel failed with error: %s", err, exc_info=True
+        )
+        persistent_notification.create(
+            hass,
+            f"Error: {err}, check the logs for more information",
+            "Protobuf failed to build",
+            "fast_protobuf",
+        )
+        return
+
     _LOGGER.warning("Restart Home Assistant to use the new wheel")
     persistent_notification.create(
         hass,
