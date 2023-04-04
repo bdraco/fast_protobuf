@@ -14,6 +14,7 @@ from google.protobuf.internal import api_implementation
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.start import async_at_start
+from homeassistant.components import persistent_notification
 
 PROTOBUF_VERSION = google.protobuf.__version__
 PROTOBUF_MIN_VERSION = "4.22.1"
@@ -41,6 +42,12 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     ):
         version_to_build = PROTOBUF_MIN_VERSION
 
+    persistent_notification.async_create(
+        hass,
+        f"Building protobuf upb {version_to_build} in the background to replace {current_type} {PROTOBUF_VERSION}, this will be cpu intensive",
+        "Protobuf is rebuilding the in background",
+        "fast_protobuf",
+    )
     _LOGGER.warning(
         "Building protobuf upb %s in the background to replace %s %s, this will be cpu intensive",
         version_to_build,
@@ -53,14 +60,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # Create an untracked task to build the wheel in the background
         # so we don't block shutdown if its not done by the time we exit
         # since they can just try again next time.
-        future = hass.loop.run_in_executor(None, reinstall_protobuf, version_to_build)
+        future = hass.loop.run_in_executor(
+            None, reinstall_protobuf, hass, version_to_build
+        )
         asyncio.ensure_future(future)
 
     entry.async_on_unload(async_at_start(hass, _async_reinstall_protobuf))
     return True
 
 
-def reinstall_protobuf(version: str) -> str:
+def reinstall_protobuf(hass: HomeAssistant, version: str) -> str:
     """Build a wheel for the current platform."""
     python_bin = sys.executable
     _LOGGER.info("Building protobuf wheel for %s", version)
@@ -74,6 +83,12 @@ def reinstall_protobuf(version: str) -> str:
         f"{python_bin} -m pip install 'protobuf=={version}' --no-binary 'protobuf'"
     )
     _LOGGER.warning("Restart Home Assistant to use the new wheel")
+    persistent_notification.create(
+        hass,
+        "Restart Home Assistant to use the new wheel",
+        "Protobuf is finished building",
+        "fast_protobuf",
+    )
 
 
 def run_command(
