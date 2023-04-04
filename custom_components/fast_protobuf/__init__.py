@@ -67,10 +67,10 @@ def reinstall_protobuf(version: str) -> str:
         run_command(
             "apk add "
             "autoconf automake libtool m4 gcc musl-dev "
-            "openssl-dev libffi-dev zlib-dev jpeg-dev g++ make git cmake"
+            "openssl-dev libffi-dev zlib-dev jpeg-dev make git cmake"
         )
     run_command(
-        f"{python_bin} -m pip install protobuf=={version} --no-binary 'protobuf'"
+        f"{python_bin} -m pip install 'protobuf=={version}' --no-binary 'protobuf'"
     )
     _LOGGER.warning("Restart Home Assistant to use the new wheel")
 
