@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import contextlib
-import glob
+import awesomeversion
 import logging
 import subprocess
 import sys
@@ -16,6 +16,8 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.start import async_at_start
 
 PROTOBUF_VERSION = google.protobuf.__version__
+PROTOBUF_MIN_VERSION = "4.22.1"
+
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -32,9 +34,16 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         )
         return True
 
+    version_to_build = PROTOBUF_VERSION
+
+    if awesomeversion.AwesomeVersion(PROTOBUF_VERSION) < awesomeversion.AwesomeVersion(
+        PROTOBUF_MIN_VERSION
+    ):
+        version_to_build = PROTOBUF_MIN_VERSION
+
     _LOGGER.warning(
         "Building protobuf upb %s in the background to replace %s, this will be cpu intensive",
-        PROTOBUF_VERSION,
+        version_to_build,
         current_type,
     )
 
@@ -43,7 +52,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         # Create an untracked task to build the wheel in the background
         # so we don't block shutdown if its not done by the time we exit
         # since they can just try again next time.
-        future = hass.loop.run_in_executor(None, reinstall_protobuf, PROTOBUF_VERSION)
+        future = hass.loop.run_in_executor(None, reinstall_protobuf, version_to_build)
         asyncio.ensure_future(future)
 
     entry.async_on_unload(async_at_start(hass, _async_reinstall_protobuf))
