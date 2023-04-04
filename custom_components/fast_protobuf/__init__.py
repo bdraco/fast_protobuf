@@ -22,16 +22,19 @@ _LOGGER = logging.getLogger(__name__)
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up Fast protobuf from a config entry."""
 
-    if api_implementation.Type() == "ubp":
+    current_type = api_implementation.Type()
+
+    if api_implementation.Type() == "upb":
         _LOGGER.info(
-            "Already using %s ubp implementation of protobuf, enjoy :)",
+            "Already using %s upb implementation of protobuf, enjoy :)",
             PROTOBUF_VERSION,
         )
         return True
 
     _LOGGER.warning(
-        "Building protobuf %s ubp version in the background, this will be cpu intensive",
+        "Building protobuf upb %s in the background to replace %s, this will be cpu intensive",
         PROTOBUF_VERSION,
+        current_type,
     )
 
     @callback
