@@ -1,10 +1,8 @@
 {
   "domain": "fast_protobuf",
   "name": "Fast protobuf",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "documentation": "https://www.home-assistant.io/integrations/fast_protobuf",
-  "requirements": [],
-  "dependencies": ["esphome"],
   "codeowners": ["@bdraco"],
   "quality_scale": "internal",
   "config_flow": true,
